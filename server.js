@@ -1,39 +1,67 @@
-// server.js
 import express from "express";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
-import connectDB from "./db.js";           // Your MongoDB connection
-import authRoutes from "./routes/auth.js"; // Authentication routes
-import contactRoutes from "./routes/contact.js"; // Contact routes
-import photoRoutes from "./routes/photoRoutes.js"; // Photo upload routes
+
+import connectDB from "./db.js";
+import authRoutes from "./routes/auth.js";
+import contactRoutes from "./routes/contact.js";
+import photoRoutes from "./routes/photoRoutes.js";
 
 const app = express();
 
-// Connect to MongoDB
+/* =========================
+   CONNECT DATABASE
+========================= */
 connectDB();
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+/* =========================
+   MIDDLEWARE
+========================= */
 
-// For ES Modules: get __dirname
+// CORS (VERY IMPORTANT for Vercel)
+app.use(
+  cors({
+    origin: "https://photohubfrontend-manahilr452s-projects.vercel.app", // 👈 replace with real frontend URL
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+  })
+);
+
+// Body parser
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+/* =========================
+   ES MODULE __dirname FIX
+========================= */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve uploads folder (for images)
+/* =========================
+   STATIC FILES (IMAGES)
+========================= */
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Routes
+/* =========================
+   ROUTES
+========================= */
 app.use("/api/auth", authRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/photos", photoRoutes);
 
-// Root route for testing
-app.get("/", (req, res) => res.send("✅ Server is running"));
+/* =========================
+   HEALTH CHECK
+========================= */
+app.get("/", (req, res) => {
+  res.status(200).send("✅ PhotoHub Backend is running");
+});
 
-// Start server
+/* =========================
+   SERVER START
+========================= */
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
