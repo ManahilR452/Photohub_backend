@@ -75,5 +75,60 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ message: "Failed to delete photo" });
   }
 });
+// ===============================
+// 📌 LIKE PHOTO
+// ===============================
+router.post("/:id/like", async (req, res) => {
+  try {
+    const { userId } = req.body;
+    
+    if (!userId) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "User ID required" 
+      });
+    }
+    
+    const photo = await Photo.findById(req.params.id);
+    
+    if (!photo) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Photo not found" 
+      });
+    }
+    
+    // Check if user already liked this photo
+    if (photo.likedBy && photo.likedBy.includes(userId)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "You already liked this photo" 
+      });
+    }
+    
+    // Increment likes and add user to likedBy array
+    photo.likes = (photo.likes || 0) + 1;
+    
+    if (!photo.likedBy) {
+      photo.likedBy = [];
+    }
+    photo.likedBy.push(userId);
+    
+    await photo.save();
+    
+    res.json({ 
+      success: true, 
+      likes: photo.likes 
+    });
+    
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ 
+      success: false, 
+      message: "Failed to like photo" 
+    });
+  }
+});
 
 export default router;
+

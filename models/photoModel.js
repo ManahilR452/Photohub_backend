@@ -7,6 +7,8 @@ const photoSchema = new mongoose.Schema({
   uploadedBy: { type: String, required: true },
   uploaderName: { type: String, required: true },
   uploadedAt: { type: Date, default: Date.now },
+  likes: { type: Number, default: 0 },           // ← ADD THIS
+  likedBy: { type: [String], default: [] },      // ← ADD THIS
 });
 
 const Photo = mongoose.model("Photo", photoSchema);

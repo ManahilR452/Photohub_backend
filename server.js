@@ -20,9 +20,14 @@ connectDB();
 ========================= */
 
 // CORS (VERY IMPORTANT for Vercel)
+
 app.use(
   cors({
-    origin: "https://photohubfrontend-manahilr452s-projects.vercel.app", // 👈 replace with real frontend URL
+    origin: [
+      "https://photohubfrontend-manahilr452s-projects.vercel.app",
+      "http://localhost:5173",  // ✅ Add this for local development
+      "http://localhost:5174"   // ✅ Backup port
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   })
