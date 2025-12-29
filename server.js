@@ -7,7 +7,8 @@ import connectDB from "./db.js";
 import authRoutes from "./routes/auth.js";
 import contactRoutes from "./routes/contact.js";
 import photoRoutes from "./routes/photoRoutes.js";
-
+import dotenv from "dotenv";
+dotenv.config();
 const app = express();
 
 /* =========================
